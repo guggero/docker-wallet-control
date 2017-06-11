@@ -78,6 +78,7 @@
             margin-bottom: 30px;
         }
     </style>
+    <title>Docker Wallet Admin GUI</title>
 </head>
 <body>
 <h1>Docker Wallet Admin GUI</h1>
@@ -106,22 +107,24 @@
                     <table border="0">
                         <tr>
                             <td>Status:</td>
-                            <td>{{status}}</td>
+                            <td>{{masternodeStatus.status}}</td>
                         </tr>
                         <tr>
                             <td>Service:</td>
-                            <td>{{service}}</td>
+                            <td>{{masternodeStatus.service}}</td>
                         </tr>
                         <tr>
                             <td>Public key:</td>
-                            <td>{{pubkey}}</td>
+                            <td>{{masternodeStatus.pubkey}}</td>
                         </tr>
                     </table>
                 </div>
             </div>
             {{/if}}
             <div class="panel panel-default">
-                <div class="panel-heading"><strong>Wallet and network statistics</strong></div>
+                <div class="panel-heading">
+                    <strong>Wallet and network statistics </strong>
+                    <button onclick="reload()">refresh</button></div>
                 <div class="panel-body">
                     <table border="0">
                         <tr>

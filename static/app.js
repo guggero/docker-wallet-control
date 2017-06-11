@@ -15,7 +15,7 @@ function loader(cb) {
 }
 
 function reload() {
-    $.get('/summary', loader(function (data) {
+    $.get('/summary' + avoidCache(), loader(function (data) {
         updateTemplate("#summary", "#content-placeholder", data);
         for (var i = 0; i < data.length; i++) {
             updateLogs(data[i].wallettype);
