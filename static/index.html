@@ -1,0 +1,239 @@
+<html>
+<head>
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <!-- Optional Bootstrap theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+
+    <!-- Latest jQuery and Handlebars -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+
+    <!-- Latest compiled and minified Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <!-- App -->
+    <script src="app.js"></script>
+
+    <style type="text/css">
+        body {
+            padding: 20px;
+        }
+
+        table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        li.divider {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid black;
+        }
+
+        .modal-backdrop {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #666;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+            position: fixed;
+            left: calc(50% - 60px);
+            top: calc(50% - 60px);
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .warning {
+            color: red;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>Docker Wallet Admin GUI</h1>
+
+<div class="row" id="content-placeholder">
+</div>
+
+<div class="modal-backdrop" id="loader">
+    <div class="loader"></div>
+</div>
+
+<script id="summary" type="x-handlebars-template">
+    <ul class="nav nav-tabs">
+        {{#each this}}
+        <li class="{{#if @first}}active{{/if}}"><a href="#{{wallettype}}" data-toggle="tab">{{label}}</a></li>
+        {{/each}}
+    </ul>
+
+    <div class="tab-content">
+        {{#each this}}
+        <div class="tab-pane {{#if @first}}active{{/if}}" id="{{wallettype}}">
+            {{#if masternodeStatus}}
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Masternode status</strong></div>
+                <div class="panel-body">
+                    <table border="0">
+                        <tr>
+                            <td>Status:</td>
+                            <td>{{status}}</td>
+                        </tr>
+                        <tr>
+                            <td>Service:</td>
+                            <td>{{service}}</td>
+                        </tr>
+                        <tr>
+                            <td>Public key:</td>
+                            <td>{{pubkey}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {{/if}}
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Wallet and network statistics</strong></div>
+                <div class="panel-body">
+                    <table border="0">
+                        <tr>
+                            <td>Balance:</td>
+                            <td>{{balance}}</td>
+                        </tr>
+                        <tr>
+                            <td>Unconfirmed balance:</td>
+                            <td>{{unconfirmedbalance}}</td>
+                        </tr>
+                        <tr>
+                            <td>Blocks:</td>
+                            <td>{{blocks}}</td>
+                        </tr>
+                        <tr>
+                            <td>Difficulty:</td>
+                            <td>{{difficulty}}</td>
+                        </tr>
+                        <tr>
+                            <td>Testnet:</td>
+                            <td>{{testnet}}</td>
+                        </tr>
+                        <tr>
+                            <td>Keys in key pool:</td>
+                            <td>{{keypoolsize}}</td>
+                        </tr>
+                        <tr>
+                            <td>Accounts:</td>
+                            <td>
+                                <ul>
+                                    {{#accounts}}
+                                    <li>Name: {{name}}</li>
+                                    <li>Balance: {{balance}}</li>
+                                    <li>Addresses:
+                                        <ul>
+                                            {{#addresses}}
+                                            <li>{{this}}</li>
+                                            {{/addresses}}
+                                        </ul>
+                                    </li>
+                                    <li class="divider">Transactions:
+                                        <ul>
+                                            {{#transactions}}
+                                            <li>{{address}}: {{amount}} ({{confirmations}} confirmations)</li>
+                                            {{/transactions}}
+                                        </ul>
+                                    </li>
+                                    {{/accounts}}
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Account:</td>
+                            <td>
+                                <input id="create-account-{{wallettype}}" type="text" placeholder="name">
+                                <button onclick="createAccount('{{wallettype}}')">Create</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Send:</td>
+                            <td>
+                                <input id="send-account-{{wallettype}}" type="text" placeholder="account">
+                                <input id="send-toaddress-{{wallettype}}" type="text" placeholder="to address">
+                                <input id="send-amount-{{wallettype}}" type="text" placeholder="amount">
+                                <button onclick="sendFrom('{{wallettype}}')">Send</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Container info</strong></div>
+                <div class="panel-body" id="container-info-{{wallettype}}"></div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Logs (newest first) </strong>
+                    <button onclick="updateLogs('{{wallettype}}')">refresh</button>
+                </div>
+                <div class="panel-body" id="logs-{{wallettype}}"></div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<script id="container-info" type="x-handlebars-template">
+    <table border="0">
+        <tr>
+            <td>Status:</td>
+            <td>{{Status}}</td>
+        </tr>
+        <tr>
+            <td>Started at:</td>
+            <td>{{StartedAt}} UTC ({{#ago}}{{StartedAt}}{{/ago}} ago)</td>
+        </tr>
+        <tr>
+            <td>Restart container:</td>
+            <td>
+                <button onclick="restart('{{wallettype}}')" class="warning">restart</button>
+                can take a while! if node does not shut down normally, the process is killed after 10 seconds and then
+                restarted!
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script id="logs" type="x-handlebars-template">
+    <pre>
+{{#each this}}
+{{this}}
+{{/each}}
+    </pre>
+</script>
+</body>
+</html>
