@@ -6,7 +6,7 @@ Wallet admin control layer for cryptocoin wallets running in a docker environmen
 Running this app requires to open the RPC ports of cryptocoin wallets.
 This can be very dangerous if done incorrectly and you could get all your coins stolen!
 
-**You have been warned!***
+**You have been warned!**
 
 ## Docker command
 
