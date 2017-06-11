@@ -9,4 +9,6 @@ RUN go install -v ./...
 
 WORKDIR /go/
 
+EXPOSE 80
+
 CMD ["bin/docker-wallet-control"]
