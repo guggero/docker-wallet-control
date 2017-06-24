@@ -19,7 +19,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="mn in vm.masternodes">
+        <tr ng-repeat="mn in vm.masternodes | orderBy:'service'">
             <td>{{mn.type}}</td>
             <td>{{mn.status}}</td>
             <td>{{mn.service}}</td>
