@@ -69,7 +69,7 @@
                         <tr>
                             <td>Public key:</td>
                             <td>
-                                <a href="http://www.presstab.pw/phpexplorer/PIVX/address.php?address={{wallet.masternodeStatus.pubkey}}">
+                                <a href="{{vm.uiData.apis.link | formatString:wallet.wallettype.toUpperCase():wallet.masternodeStatus.pubkey}}">
                                     {{wallet.masternodeStatus.pubkey}}
                                 </a>
                             </td>
