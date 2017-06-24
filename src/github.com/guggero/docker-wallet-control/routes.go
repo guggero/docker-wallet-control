@@ -86,7 +86,7 @@ func routeShowSummary(w http.ResponseWriter, r *http.Request) {
     for _, wallet := range appConfig.Wallets {
         client, err := getRPCClient(wallet.ContainerName, r)
         if err == nil && client != nil {
-            response.Summaries = append(response.Summaries, client.GetSummary(wallet.ContainerName, wallet.Label))
+            response.Summaries = append(response.Summaries, client.GetSummary(wallet.ContainerName, wallet.Type, wallet.Label))
         }
     }
     writeJsonResponse(w, http.StatusOK, response)

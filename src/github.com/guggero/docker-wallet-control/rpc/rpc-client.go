@@ -83,14 +83,14 @@ func CreateClient(url string, user string, password string) (*Client) {
     return &client
 }
 
-func (client *Client) GetSummary(hostname string, label string) (Summary) {
+func (client *Client) GetSummary(hostname string, walletType string, label string) (Summary) {
     info := client.GetInfo()
     walletinfo := client.GetWalletInfo()
     accountmap := client.ListAccounts()
 
     summary := Summary{
         Label: label,
-        WalletType: hostname,
+        WalletType: walletType,
         TxCount: walletinfo.TxCount,
         Balance: info.Balance,
         UnconfirmedBalance: client.GetUnconfirmedBalance(),

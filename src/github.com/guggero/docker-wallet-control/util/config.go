@@ -8,6 +8,7 @@ import (
 type WalletConfig struct {
     Label         string     `json:"label"`
     ContainerName string     `json:"containerName"`
+    Type          string     `json:"type"`
     RPCPort       uint16     `json:"rpcPort"`
     AllowedUsers  []string   `json:"allowedUsers"`
 }
