@@ -1,0 +1,48 @@
+body {
+    padding: 20px;
+}
+
+table td {
+    padding: 5px;
+    vertical-align: top;
+}
+
+li.divider {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #666;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 1s linear infinite;
+    position: fixed;
+    left: calc(50% - 60px);
+    top: calc(50% - 60px);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.warning {
+    color: red;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 30px;
+}

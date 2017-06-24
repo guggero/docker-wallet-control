@@ -17,29 +17,24 @@ func main() {
         panic(err)
     }
 
-    runBenchmark()
+    checkWallets()
     runServer()
 }
 
-func runBenchmark() {
+func checkWallets() {
     for _, wallet := range appConfig.Wallets {
 
         var url = fmt.Sprintf("http://%s:%d/", wallet.ContainerName, wallet.RPCPort)
         client := rpc.CreateClient(url, appConfig.RPCUser, appConfig.RPCPassword)
 
         var start = time.Now()
-        var num = 1000
-
-        for i := 0; i < num; i++ {
-            info := client.GetInfo()
-            if (info.Blocks <= 0) {
-                panic("No blocks!")
-            }
+        info := client.GetInfo()
+        if (info.Blocks <= 0) {
+            fmt.Printf("Error checking wallet %s, got %d blocks!", wallet.ContainerName, info.Blocks)
         }
         var duration = time.Since(start)
-        fmt.Printf("Finished measurement for %s in %s with %f ops/s\n",
+        fmt.Printf("Finished checking %s in %s\n",
             wallet.ContainerName,
-            duration,
-            float64(num) / (float64(duration.Nanoseconds()) / 1e9))
+            duration)
     }
 }

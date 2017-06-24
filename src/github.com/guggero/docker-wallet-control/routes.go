@@ -15,6 +15,11 @@ type Route struct {
     HandlerFunc http.HandlerFunc
 }
 
+type SummaryResponse struct {
+    Summaries []rpc.Summary             `json:"summaries"`
+    UiData    map[string]*interface{}   `json:"uiData"`
+}
+
 type Routes []Route
 
 var routes = Routes{
@@ -75,14 +80,16 @@ var routes = Routes{
 }
 
 func routeShowSummary(w http.ResponseWriter, r *http.Request) {
-    var summaries []rpc.Summary
+    var response = &SummaryResponse{
+        UiData: appConfig.UiData,
+    }
     for _, wallet := range appConfig.Wallets {
         client, err := getRPCClient(wallet.ContainerName, r)
         if err == nil && client != nil {
-            summaries = append(summaries, client.GetSummary(wallet.ContainerName, wallet.Label))
+            response.Summaries = append(response.Summaries, client.GetSummary(wallet.ContainerName, wallet.Label))
         }
     }
-    writeJsonResponse(w, http.StatusOK, summaries)
+    writeJsonResponse(w, http.StatusOK, response)
 }
 
 func routeAccountAddress(w http.ResponseWriter, r *http.Request) {

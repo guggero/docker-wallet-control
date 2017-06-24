@@ -19,14 +19,15 @@ type UserConfig struct {
 }
 
 type Configuration struct {
-    RPCUser           string            `json:"rpcuser"`
-    RPCPassword       string            `json:"rpcpassword"`
-    Wallets           []WalletConfig    `json:"wallets"`
-    UseClientCertAuth bool              `json:"useClientCertAuth"`
-    ServeTLS          bool              `json:"serveTLS"`
-    ServerAddress     string            `json:"serverAddress"`
-    ServerPort        uint16            `json:"serverPort"`
-    User              []UserConfig      `json:"users"`
+    RPCUser           string                    `json:"rpcuser"`
+    RPCPassword       string                    `json:"rpcpassword"`
+    Wallets           []WalletConfig            `json:"wallets"`
+    UseClientCertAuth bool                      `json:"useClientCertAuth"`
+    ServeTLS          bool                      `json:"serveTLS"`
+    ServerAddress     string                    `json:"serverAddress"`
+    ServerPort        uint16                    `json:"serverPort"`
+    User              []UserConfig              `json:"users"`
+    UiData            map[string]*interface{}   `json:"uiData"`
 }
 
 func ReadConfiguration(path string) (*Configuration, error) {

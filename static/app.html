@@ -1,0 +1,196 @@
+<h1>Docker Wallet Admin GUI</h1>
+
+<div ng-if="vm.masternodes && vm.masternodes.length > 0">
+    <h2>Masternode overview</h2>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Service</th>
+            <th>Address</th>
+            <th>Balance</th>
+            <th>Transactions</th>
+            <th>Last transaction (UTC)</th>
+            <th>Change last 7d</th>
+            <th>Change last 30d</th>
+            <th>Change total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="mn in vm.masternodes">
+            <td>{{mn.type}}</td>
+            <td>{{mn.status}}</td>
+            <td>{{mn.service}}</td>
+            <td>
+                <a target="_blank" href="{{vm.uiData.apis.link | formatString:mn.type.toUpperCase():mn.address}}">
+                    {{mn.address}}
+                </a>
+            </td>
+            <td>{{mn.balance | amount}}</td>
+            <td>{{mn.transactions.length}}</td>
+            <td>{{mn.transactions[0].time_utc | date}} ({{mn.transactions[0].change | amount}})
+                {{mn.transactions[0].time_utc | ago}} ago
+            </td>
+            <td>{{mn.transactions | change:7 | amount}}</td>
+            <td>{{mn.transactions | change:30 | amount}}</td>
+            <td>{{mn.transactions | change | amount}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2>Wallet operations</h2>
+<div class="row">
+    <ul class="nav nav-tabs">
+        <li ng-repeat="wallet in vm.wallets"
+            ng-class="{'active': vm.tab === wallet.wallettype}">
+            <a href="#" ng-click="vm.changeTab(wallet)">{{wallet.label}}</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div ng-repeat="wallet in vm.wallets"
+             ng-class="{'active': vm.tab === wallet.wallettype}"
+             class="tab-pane">
+            <div ng-if="wallet.masternodeStatus" class="panel panel-default">
+                <div class="panel-heading"><strong>Masternode status</strong></div>
+                <div class="panel-body">
+                    <table border="0">
+                        <tr>
+                            <td>Status:</td>
+                            <td>{{wallet.masternodeStatus.status}}</td>
+                        </tr>
+                        <tr>
+                            <td>Service:</td>
+                            <td>{{wallet.masternodeStatus.service}}</td>
+                        </tr>
+                        <tr>
+                            <td>Public key:</td>
+                            <td>
+                                <a href="http://www.presstab.pw/phpexplorer/PIVX/address.php?address={{wallet.masternodeStatus.pubkey}}">
+                                    {{wallet.masternodeStatus.pubkey}}
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Wallet and network statistics </strong>
+                    <button ng-click="vm.activate()">refresh</button>
+                </div>
+                <div class="panel-body">
+                    <table border="0">
+                        <tr>
+                            <td>Balance:</td>
+                            <td>{{wallet.balance}}</td>
+                        </tr>
+                        <tr>
+                            <td>Unconfirmed balance:</td>
+                            <td>{{wallet.unconfirmedbalance}}</td>
+                        </tr>
+                        <tr>
+                            <td>Blocks:</td>
+                            <td>{{wallet.blocks}}</td>
+                        </tr>
+                        <tr>
+                            <td>Difficulty:</td>
+                            <td>{{wallet.difficulty}}</td>
+                        </tr>
+                        <tr>
+                            <td>Testnet:</td>
+                            <td>{{wallet.testnet}}</td>
+                        </tr>
+                        <tr>
+                            <td>Keys in key pool:</td>
+                            <td>{{wallet.keypoolsize}}</td>
+                        </tr>
+                        <tr>
+                            <td>Accounts:</td>
+                            <td>
+                                <ul>
+                                    <li ng-repeat-start="account in wallet.accounts | orderBy:'name'">Name:
+                                        {{account.name}}
+                                    </li>
+                                    <li>Balance: {{account.balance}}</li>
+                                    <li>Addresses:
+                                        <ul>
+                                            <li ng-repeat="address in account.addresses">{{address}}</li>
+                                        </ul>
+                                    </li>
+                                    <li ng-repeat-end class="divider">Transactions:
+                                        <ul>
+                                            <li ng-repeat="transaction in account.transactions">
+                                                {{transaction.address}}: {{transaction.amount}}
+                                                ({{transaction.confirmations}} confirmations)
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Account:</td>
+                            <td>
+                                <input id="create-account-{{wallet.wallettype}}" type="text" placeholder="name">
+                                <button ng-click="vm.createAccount(wallet)">Create</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Send:</td>
+                            <td>
+                                <input id="send-account-{{wallet.wallettype}}" type="text" placeholder="account">
+                                <input id="send-toaddress-{{wallet.wallettype}}" type="text" placeholder="to address">
+                                <input id="send-amount-{{wallet.wallettype}}" type="text" placeholder="amount">
+                                <button ng-click="vm.sendFrom(wallet)">Send</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Container info </strong>
+                    <button ng-click="vm.getContainerInfo(wallet)">refresh</button>
+                </div>
+                <div class="panel-body" ng-if="wallet.container">
+                    <table border="0">
+                        <tr>
+                            <td>Status:</td>
+                            <td>{{wallet.container.Status}}</td>
+                        </tr>
+                        <tr>
+                            <td>Started at:</td>
+                            <td>{{wallet.container.StartedAt}} UTC ({{wallet.container.StartedAt | ago}} ago)</td>
+                        </tr>
+                        <tr>
+                            <td>Restart container:</td>
+                            <td>
+                                <button ng-click="vm.restart(wallet)" class="warning">restart</button>
+                                can take a while! if node does not shut down normally, the process is killed after
+                                10 seconds and then restarted! Killing the process can lead to corruption of the
+                                blockchain data, so be careful!
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Logs (newest first) </strong>
+                    <button ng-click="vm.getLogs(wallet)">refresh</button>
+                </div>
+                <div class="panel-body" ng-if="wallet.logs">
+                    <pre>{{wallet.logs}}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" ng-if="vm.running">
+    <div class="loader"></div>
+</div>
