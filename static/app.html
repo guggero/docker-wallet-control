@@ -45,14 +45,14 @@
 <div class="row">
     <ul class="nav nav-tabs">
         <li ng-repeat="wallet in vm.wallets"
-            ng-class="{'active': vm.tab === wallet.wallettype}">
+            ng-class="{'active': vm.tab === wallet.label}">
             <a href="#" ng-click="vm.changeTab(wallet)">{{wallet.label}}</a>
         </li>
     </ul>
 
     <div class="tab-content">
         <div ng-repeat="wallet in vm.wallets"
-             ng-class="{'active': vm.tab === wallet.wallettype}"
+             ng-class="{'active': vm.tab === wallet.label}"
              class="tab-pane">
             <div ng-if="wallet.masternodeStatus" class="panel panel-default">
                 <div class="panel-heading"><strong>Masternode status</strong></div>

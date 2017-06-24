@@ -89,7 +89,7 @@ function AppController($http, $q) {
             vm.uiData = response.data.uiData;
 
             if (vm.tab === null && vm.wallets.length > 0) {
-                vm.tab = vm.wallets[0].wallettype;
+                vm.tab = vm.wallets[0].label;
             }
 
             var promises = [];
@@ -105,7 +105,7 @@ function AppController($http, $q) {
     }
 
     function changeTab(wallet) {
-        vm.tab = wallet.wallettype;
+        vm.tab = wallet.label;
     }
 
     function getContainerInfo(wallet) {
