@@ -92,13 +92,6 @@ function AppController($http, $q) {
                 vm.tab = vm.wallets[0].wallettype;
             }
 
-            // TODO remove debug
-            vm.wallets[0].masternodeStatus = {
-                status: 'running',
-                service: '[aa:bb:cc]:1234',
-                pubkey: 'DCAS68E3gVqEikLRFLYJ5EHjY3Rwm3yuJU'
-            }
-
             var promises = [];
             vm.wallets.forEach(function (wallet) {
                 promises.push(getContainerInfo(wallet));
