@@ -122,7 +122,7 @@ function AppController($http, $q) {
 
     function getMasternodeStats(wallet) {
         if (wallet.masternodeStatus && wallet.masternodeStatus.addr) {
-            var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.pubkey);
+            var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.addr);
             return $http.get(url).then(function (response) {
                 vm.masternodes.push({
                     service: wallet.masternodeStatus.netaddr,
