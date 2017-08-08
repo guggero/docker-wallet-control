@@ -121,14 +121,14 @@ function AppController($http, $q) {
     }
 
     function getMasternodeStats(wallet) {
-        if (wallet.masternodeStatus && wallet.masternodeStatus.pubkey) {
+        if (wallet.masternodeStatus && wallet.masternodeStatus.addr) {
             var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.pubkey);
             return $http.get(url).then(function (response) {
                 vm.masternodes.push({
-                    service: wallet.masternodeStatus.service,
-                    status: wallet.masternodeStatus.status,
+                    service: wallet.masternodeStatus.netaddr,
+                    status: wallet.masternodeStatus.message,
                     type: wallet.wallettype,
-                    address: wallet.masternodeStatus.pubkey,
+                    address: wallet.masternodeStatus.addr,
                     balance: response.data.addresses[0].final_balance,
                     transactions: mergeTransactions(response.data.txs, 'hash', 'change')
                 });
