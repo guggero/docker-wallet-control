@@ -30,7 +30,7 @@ func checkWallets() {
         var start = time.Now()
         info := client.GetInfo()
         if (info.Blocks <= 0) {
-            fmt.Printf("Error checking wallet %s, got %d blocks!", wallet.ContainerName, info.Blocks)
+            fmt.Printf("Error checking wallet %s, got %f blocks!", wallet.ContainerName, info.Blocks)
         }
         var duration = time.Since(start)
         fmt.Printf("Finished checking %s in %s\n",
