@@ -135,16 +135,16 @@
                         <tr>
                             <td>Account:</td>
                             <td>
-                                <input id="create-account-{{wallet.wallettype}}" type="text" placeholder="name">
+                                <input id="create-account-{{wallet.containername}}" type="text" placeholder="name">
                                 <button ng-click="vm.createAccount(wallet)">Create</button>
                             </td>
                         </tr>
                         <tr>
                             <td>Send:</td>
                             <td>
-                                <input id="send-account-{{wallet.wallettype}}" type="text" placeholder="account">
-                                <input id="send-toaddress-{{wallet.wallettype}}" type="text" placeholder="to address">
-                                <input id="send-amount-{{wallet.wallettype}}" type="text" placeholder="amount">
+                                <input id="send-account-{{wallet.containername}}" type="text" placeholder="account">
+                                <input id="send-toaddress-{{wallet.containername}}" type="text" placeholder="to address">
+                                <input id="send-amount-{{wallet.containername}}" type="text" placeholder="amount">
                                 <button ng-click="vm.sendFrom(wallet)">Send</button>
                             </td>
                         </tr>

@@ -109,13 +109,13 @@ function AppController($http, $q) {
     }
 
     function getContainerInfo(wallet) {
-        return $http.get('/' + wallet.wallettype + '/health' + avoidCache()).then(function (response) {
+        return $http.get('/' + wallet.containername + '/health' + avoidCache()).then(function (response) {
             wallet.container = response.data;
         });
     }
 
     function getLogs(wallet) {
-        return $http.get('/' + wallet.wallettype + '/logs' + avoidCache()).then(function (response) {
+        return $http.get('/' + wallet.containername + '/logs' + avoidCache()).then(function (response) {
             wallet.logs = response.data.reverse().join('\n');
         })
     }
@@ -140,7 +140,7 @@ function AppController($http, $q) {
 
     function restart(wallet) {
         vm.running = true;
-        $http.get('/' + wallet.wallettype + '/restart' + avoidCache()).then(function () {
+        $http.get('/' + wallet.containername + '/restart' + avoidCache()).then(function () {
             return getContainerInfo(wallet);
         }).finally(function () {
             vm.running = false;
@@ -149,23 +149,23 @@ function AppController($http, $q) {
 
     function createAccount(wallet) {
         vm.running = true;
-        var accountName = $("#create-account-" + wallet.wallettype).val();
-        $http.get('/' + wallet.wallettype + '/account/' + accountName).then(function (response) {
+        var accountName = $("#create-account-" + wallet.containername).val();
+        $http.get('/' + wallet.containername + '/account/' + accountName).then(function (response) {
             alert('Account ' + accountName + ' created, address: ' + response.data);
             activate();
         });
     }
 
     function sendFrom(wallet) {
-        var accountName = $("#send-account-" + wallet.wallettype).val();
-        var toAddress = $("#send-toaddress-" + wallet.wallettype).val();
-        var amount = $("#send-amount-" + wallet.wallettype).val();
+        var accountName = $("#send-account-" + wallet.containername).val();
+        var toAddress = $("#send-toaddress-" + wallet.containername).val();
+        var amount = $("#send-amount-" + wallet.containername).val();
         var post = {
             account: accountName,
             address: toAddress,
             amount: amount * 1
         };
-        $http.post('/' + wallet.wallettype + '/sendfrom', JSON.stringify(post)).then(function (response) {
+        $http.post('/' + wallet.containername + '/sendfrom', JSON.stringify(post)).then(function (response) {
             alert('Sent ' + amount + ' to ' + toAddress + ' from account ' + accountName + ', result: ' + response.data);
             activate();
         });

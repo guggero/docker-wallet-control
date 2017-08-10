@@ -45,6 +45,7 @@ type Account struct {
 type Summary struct {
     Label              string       `json:"label"`
     WalletType         string       `json:"wallettype"`
+    ContainerName      string       `json:"containername"`
     TxCount            float64      `json:"txcount"`
     Balance            float64      `json:"balance"`
     UnconfirmedBalance float64      `json:"unconfirmedbalance"`
@@ -91,6 +92,7 @@ func (client *Client) GetSummary(hostname string, walletType string, label strin
     summary := Summary{
         Label: label,
         WalletType: walletType,
+        ContainerName: hostname,
         TxCount: walletinfo.TxCount,
         Balance: info.Balance,
         UnconfirmedBalance: client.GetUnconfirmedBalance(),
