@@ -60,7 +60,7 @@ angular
     });
 
 
-function AppController($http, $q) {
+function AppController($http, $q, $scope) {
     var vm = this;
 
     vm.wallets = [];
@@ -76,6 +76,7 @@ function AppController($http, $q) {
     vm.restart = restart;
     vm.createAccount = createAccount;
     vm.sendFrom = sendFrom;
+    vm.sendCommand = sendCommand;
 
     activate();
 
@@ -149,7 +150,7 @@ function AppController($http, $q) {
 
     function createAccount(wallet) {
         vm.running = true;
-        var accountName = $("#create-account-" + wallet.containername).val();
+        var accountName = $('#create-account-' + wallet.containername).val();
         $http.get('/' + wallet.containername + '/account/' + accountName).then(function (response) {
             alert('Account ' + accountName + ' created, address: ' + response.data);
             activate();
@@ -157,9 +158,9 @@ function AppController($http, $q) {
     }
 
     function sendFrom(wallet) {
-        var accountName = $("#send-account-" + wallet.containername).val();
-        var toAddress = $("#send-toaddress-" + wallet.containername).val();
-        var amount = $("#send-amount-" + wallet.containername).val();
+        var accountName = $('#send-account-' + wallet.containername).val();
+        var toAddress = $('#send-toaddress-' + wallet.containername).val();
+        var amount = $('#send-amount-' + wallet.containername).val();
         var post = {
             account: accountName,
             address: toAddress,
@@ -168,6 +169,21 @@ function AppController($http, $q) {
         $http.post('/' + wallet.containername + '/sendfrom', JSON.stringify(post)).then(function (response) {
             alert('Sent ' + amount + ' to ' + toAddress + ' from account ' + accountName + ', result: ' + response.data);
             activate();
+        });
+    }
+
+    function sendCommand(wallet) {
+        var commandParts = $('#send-comand-' + wallet.containername).val().split(' ');
+        var post = {
+            method: commandParts.shift(),
+            args: commandParts
+        };
+        $http.post('/' + wallet.containername + '/command', JSON.stringify(post)).then(function (response) {
+            if (typeof response.data === 'string') {
+                wallet.commandResponse = response.data;
+            } else {
+                wallet.commandResponse = JSON.stringify(response.data, null, 2);
+            }
         });
     }
 

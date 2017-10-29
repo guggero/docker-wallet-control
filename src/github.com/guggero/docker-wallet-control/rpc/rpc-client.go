@@ -36,48 +36,53 @@ type GetWalletInfo struct {
 }
 
 type Account struct {
-    Name         string         `json:"name"`
-    Addresses    []string       `json:"addresses"`
-    Transactions []Transaction  `json:"transactions"`
-    Balance      float64        `json:"balance"`
+    Name         string        `json:"name"`
+    Addresses    []string      `json:"addresses"`
+    Transactions []Transaction `json:"transactions"`
+    Balance      float64       `json:"balance"`
 }
 
 type Summary struct {
-    Label              string       `json:"label"`
-    WalletType         string       `json:"wallettype"`
-    ContainerName      string       `json:"containername"`
-    TxCount            float64      `json:"txcount"`
-    Balance            float64      `json:"balance"`
-    UnconfirmedBalance float64      `json:"unconfirmedbalance"`
-    Blocks             float64      `json:"blocks"`
-    Difficulty         float64      `json:"difficulty"`
-    Testnet            bool         `json:"testnet"`
-    KeyPoolSize        float64      `json:"keypoolsize"`
-    Accounts           []Account    `json:"accounts"`
-    Errors             string       `json:"errors"`
-    MasternodeStatus   interface{}  `json:"masternodeStatus"`
-    Logs               []string     `json:"logs"`
+    Label              string      `json:"label"`
+    WalletType         string      `json:"wallettype"`
+    ContainerName      string      `json:"containername"`
+    TxCount            float64     `json:"txcount"`
+    Balance            float64     `json:"balance"`
+    UnconfirmedBalance float64     `json:"unconfirmedbalance"`
+    Blocks             float64     `json:"blocks"`
+    Difficulty         float64     `json:"difficulty"`
+    Testnet            bool        `json:"testnet"`
+    KeyPoolSize        float64     `json:"keypoolsize"`
+    Accounts           []Account   `json:"accounts"`
+    Errors             string      `json:"errors"`
+    MasternodeStatus   interface{} `json:"masternodeStatus"`
+    Logs               []string    `json:"logs"`
 }
 
 type Transaction struct {
-    Account       string    `json:"account"`
-    Address       string    `json:"address"`
-    Category      string    `json:"category"`
-    Amount        float64   `json:"amount"`
-    Label         string    `json:"label"`
-    Vout          float64   `json:"vout"`
-    Confirmations float64   `json:"confirmations"`
-    BlockHash     string    `json:"blockhash"`
-    BlockIndex    float64   `json:"blockindex"`
-    BlockTime     float64   `json:"blocktime"`
-    TransactionId string    `json:"txid"`
-    Time          float64   `json:"time"`
-    TimeReceived  float64   `json:"timereceived"`
+    Account       string  `json:"account"`
+    Address       string  `json:"address"`
+    Category      string  `json:"category"`
+    Amount        float64 `json:"amount"`
+    Label         string  `json:"label"`
+    Vout          float64 `json:"vout"`
+    Confirmations float64 `json:"confirmations"`
+    BlockHash     string  `json:"blockhash"`
+    BlockIndex    float64 `json:"blockindex"`
+    BlockTime     float64 `json:"blocktime"`
+    TransactionId string  `json:"txid"`
+    Time          float64 `json:"time"`
+    TimeReceived  float64 `json:"timereceived"`
+}
+
+type Command struct {
+    Method string   `json:"method"`
+    Args   []interface{} `json:"args"`
 }
 
 func CreateClient(url string, user string, password string) (*Client) {
     client := Client{
-        Url: url,
+        Url:       url,
         RPCClient: jsonrpc.NewRPCClient(url),
     }
     client.RPCClient.SetBasicAuth(user, password)
@@ -90,27 +95,27 @@ func (client *Client) GetSummary(hostname string, walletType string, label strin
     accountmap := client.ListAccounts()
 
     summary := Summary{
-        Label: label,
-        WalletType: walletType,
-        ContainerName: hostname,
-        TxCount: walletinfo.TxCount,
-        Balance: info.Balance,
+        Label:              label,
+        WalletType:         walletType,
+        ContainerName:      hostname,
+        TxCount:            walletinfo.TxCount,
+        Balance:            info.Balance,
         UnconfirmedBalance: client.GetUnconfirmedBalance(),
-        Blocks: info.Blocks,
-        Difficulty: info.Difficulty,
-        Testnet: info.Testnet,
-        KeyPoolSize: info.KeyPoolSize,
-        Errors: info.Errors,
-        Accounts: make([]Account, len(accountmap)),
-        MasternodeStatus: client.Masternode("status"),
+        Blocks:             info.Blocks,
+        Difficulty:         info.Difficulty,
+        Testnet:            info.Testnet,
+        KeyPoolSize:        info.KeyPoolSize,
+        Errors:             info.Errors,
+        Accounts:           make([]Account, len(accountmap)),
+        MasternodeStatus:   client.Masternode("status"),
     }
 
     var idx = 0
     for key, value := range accountmap {
         summary.Accounts[idx] = Account{
-            Name: key,
-            Balance: value,
-            Addresses: client.GetAddressesByAccount(key),
+            Name:         key,
+            Balance:      value,
+            Addresses:    client.GetAddressesByAccount(key),
             Transactions: client.ListTransactions(key),
         }
         idx++
@@ -173,7 +178,13 @@ func (client *Client) Masternode(command string) (interface{}) {
     return &result
 }
 
-func (client *Client) doCall(method string, result interface{}, params... interface{}) {
+func (client *Client) Command(command Command) (interface{}) {
+    var result interface{}
+    client.doCall(command.Method, &result, command.Args...)
+    return &result
+}
+
+func (client *Client) doCall(method string, result interface{}, params ... interface{}) {
     response, err := client.RPCClient.Call(method, params...)
     if err != nil {
         util.LogError(errors.New("Could not connect to RPC server. Make sure the port " +
@@ -189,4 +200,3 @@ func (client *Client) doCall(method string, result interface{}, params... interf
         panic("Got nil result for url " + client.Url + " and method " + method)
     }
 }
-

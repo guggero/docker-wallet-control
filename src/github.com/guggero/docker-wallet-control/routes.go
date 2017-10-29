@@ -60,6 +60,12 @@ var routes = Routes{
         routeMasternodeList,
     },
     Route{
+        "Command",
+        "POST",
+        "/{wallet}/command",
+        routeCommand,
+    },
+    Route{
         "Logs",
         "GET",
         "/{wallet}/logs",
@@ -151,6 +157,27 @@ func routeMasternodeList(w http.ResponseWriter, r *http.Request) {
     }
 
     writeJsonResponse(w, http.StatusOK, client.Masternode("list"))
+}
+
+func routeCommand(w http.ResponseWriter, r *http.Request) {
+    var (
+        command rpc.Command
+        client *rpc.Client
+        err error
+        vars = mux.Vars(r)
+    )
+
+    if err = readJsonBody(w, r, &command); err != nil {
+        handleError(w, err)
+        return
+    }
+
+    if client, err = getRPCClient(vars["wallet"], r); err != nil {
+        handleError(w, err)
+        return
+    }
+
+    writeJsonResponse(w, http.StatusOK, client.Command(command))
 }
 
 func routeLogs(w http.ResponseWriter, r *http.Request) {
