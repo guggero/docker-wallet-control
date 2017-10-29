@@ -24,7 +24,7 @@
             <td>{{mn.status}}</td>
             <td>{{mn.service}}</td>
             <td>
-                <a target="_blank" href="{{vm.uiData.apis.link | formatString:mn.type.toUpperCase():mn.address}}">
+                <a target="_blank" href="{{vm.uiData.apis.link | formatString:mn.type:mn.address}}">
                     {{mn.address}}
                 </a>
             </td>
@@ -69,7 +69,8 @@
                         <tr>
                             <td>Public key:</td>
                             <td>
-                                <a href="{{vm.uiData.apis.link | formatString:wallet.wallettype:wallet.masternodeStatus.addr}}">
+                                <a target="_blank"
+                                   href="{{vm.uiData.apis.link | formatString:wallet.wallettype:wallet.masternodeStatus.addr}}">
                                     {{wallet.masternodeStatus.addr}}
                                 </a>
                             </td>
@@ -119,7 +120,8 @@
                                     <li>Addresses:
                                         <ul>
                                             <li ng-repeat="address in account.addresses">
-                                                <a href="{{vm.uiData.apis.link | formatString:wallet.wallettype:address}}">
+                                                <a target="_blank"
+                                                   href="{{vm.uiData.apis.link | formatString:wallet.wallettype:address}}">
                                                     {{address}}
                                                 </a>
                                             </li>
@@ -128,7 +130,8 @@
                                     <li ng-repeat-end class="divider">Transactions:
                                         <ul>
                                             <li ng-repeat="transaction in account.transactions">
-                                                <a href="{{vm.uiData.apis.link | formatString:wallet.wallettype:transaction.address}}">
+                                                <a target="_blank"
+                                                   href="{{vm.uiData.apis.link | formatString:wallet.wallettype:transaction.address}}">
                                                     {{transaction.address}}
                                                 </a>: {{transaction.amount}}
                                                 ({{transaction.confirmations}} confirmations)
