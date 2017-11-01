@@ -123,19 +123,17 @@ function AppController($http, $q, $scope) {
 
   function getMasternodeStats(wallet) {
     if (wallet.masternodeStatus && wallet.masternodeStatus.addr) {
-      var mnStatus = wallet.masternodeStatus;
-      mnStatus.service = mnStatus.service || mnStatus.netaddr;
-      mnStatus.status = mnStatus.message || mnStatus.status;
-      mnStatus.address = mnStatus.payee || mnStatus.addr;
+      wallet.masternodeStatus.service = wallet.masternodeStatus.service || wallet.masternodeStatus.netaddr;
+      wallet.masternodeStatus.status = wallet.masternodeStatus.message || wallet.masternodeStatus.status;
+      wallet.masternodeStatus.address = wallet.masternodeStatus.payee || wallet.masternodeStatus.addr;
 
-      var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.addr);
+      var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.address);
       return $http.get(url).then(function (response) {
-        var mnStatus = wallet.masternodeStatus;
         vm.masternodes.push({
-          service: mnStatus.service,
-          status: mnStatus.status,
+          service: wallet.masternodeStatus.service,
+          status: wallet.masternodeStatus.status,
           type: wallet.wallettype,
-          address: mnStatus.address,
+          address: wallet.masternodeStatus.address,
           balance: response.data.addresses[0].final_balance,
           transactions: mergeTransactions(response.data.txs, 'hash', 'change')
         });
