@@ -125,11 +125,12 @@ function AppController($http, $q, $scope) {
         if (wallet.masternodeStatus && wallet.masternodeStatus.addr) {
             var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.addr);
             return $http.get(url).then(function (response) {
+                var mnStatus = wallet.masternodeStatus;
                 vm.masternodes.push({
-                    service: wallet.masternodeStatus.netaddr,
-                    status: wallet.masternodeStatus.message,
+                    service: mnStatus.service || mnStatus.netaddr,
+                    status: mnStatus.message || mnStatus.status,
                     type: wallet.wallettype,
-                    address: wallet.masternodeStatus.addr,
+                    address: mnStatus.payee || mnStatus.addr,
                     balance: response.data.addresses[0].final_balance,
                     transactions: mergeTransactions(response.data.txs, 'hash', 'change')
                 });
