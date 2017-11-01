@@ -122,22 +122,24 @@ function AppController($http, $q, $scope) {
   }
 
   function getMasternodeStats(wallet) {
-    if (wallet.masternodeStatus && wallet.masternodeStatus.addr) {
+    if (wallet.masternodeStatus) {
       wallet.masternodeStatus.service = wallet.masternodeStatus.service || wallet.masternodeStatus.netaddr;
       wallet.masternodeStatus.status = wallet.masternodeStatus.message || wallet.masternodeStatus.status;
       wallet.masternodeStatus.address = wallet.masternodeStatus.payee || wallet.masternodeStatus.addr;
 
-      var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.address);
-      return $http.get(url).then(function (response) {
-        vm.masternodes.push({
-          service: wallet.masternodeStatus.service,
-          status: wallet.masternodeStatus.status,
-          type: wallet.wallettype,
-          address: wallet.masternodeStatus.address,
-          balance: response.data.addresses[0].final_balance,
-          transactions: mergeTransactions(response.data.txs, 'hash', 'change')
+      if (wallet.masternodeStatus.address) {
+        var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.address);
+        return $http.get(url).then(function (response) {
+          vm.masternodes.push({
+            service: wallet.masternodeStatus.service,
+            status: wallet.masternodeStatus.status,
+            type: wallet.wallettype,
+            address: wallet.masternodeStatus.address,
+            balance: response.data.addresses[0].final_balance,
+            transactions: mergeTransactions(response.data.txs, 'hash', 'change')
+          });
         });
-      });
+      }
     } else {
       return $q.when();
     }
