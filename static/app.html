@@ -60,18 +60,18 @@
                     <table border="0">
                         <tr>
                             <td>Status:</td>
-                            <td>{{wallet.masternodeStatus.message}}</td>
+                            <td>{{wallet.masternodeStatus.status}}</td>
                         </tr>
                         <tr>
                             <td>Service:</td>
-                            <td>{{wallet.masternodeStatus.netaddr}}</td>
+                            <td>{{wallet.masternodeStatus.service}}</td>
                         </tr>
                         <tr>
                             <td>Public key:</td>
                             <td>
                                 <a target="_blank"
-                                   href="{{vm.uiData.apis.link | formatString:wallet.wallettype:wallet.masternodeStatus.addr}}">
-                                    {{wallet.masternodeStatus.addr}}
+                                   href="{{vm.uiData.apis.link | formatString:wallet.wallettype:wallet.masternodeStatus.address}}">
+                                    {{wallet.masternodeStatus.address}}
                                 </a>
                             </td>
                         </tr>
