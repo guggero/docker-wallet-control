@@ -46,7 +46,7 @@
     <ul class="nav nav-tabs">
         <li ng-repeat="wallet in vm.wallets"
             ng-class="{'active': vm.tab === wallet.label}">
-            <a href="#" ng-click="vm.changeTab(wallet)">{{wallet.label}}</a>
+            <a href="javascript:void(0)" ng-click="vm.changeTab(wallet)">{{wallet.label}}</a>
         </li>
     </ul>
 
