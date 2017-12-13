@@ -2,14 +2,6 @@ angular.element(document.body).ready(function () {
   angular.bootstrap(document.body, ['app'])
 });
 
-var SERVER = localStorage.getItem('wc.server') || '';
-
-if (localStorage.getItem('wc.auth')) {
-  $.ajaxSetup({
-    headers: { 'Authorization': 'Basic ' + localStorage.getItem('wc.auth') }
-  });
-}
-
 function avoidCache() {
   return '?_=' + (new Date().getTime());
 }
@@ -69,7 +61,8 @@ angular
 
 
 function AppController($http, $q) {
-  var vm = this;
+  var vm = this,
+    SERVER = localStorage.getItem('wc.server') || '';
 
   vm.wallets = [];
   vm.uiData = null;
@@ -91,6 +84,10 @@ function AppController($http, $q) {
   ////////////////
 
   function activate() {
+    if (localStorage.getItem('wc.auth')) {
+      $http.defaults.headers.common['Authorization'] = localStorage.getItem('wc.auth');
+    }
+
     vm.running = true;
     vm.masternodes = [];
     return $http.get(SERVER + '/summary' + avoidCache()).then(function (response) {

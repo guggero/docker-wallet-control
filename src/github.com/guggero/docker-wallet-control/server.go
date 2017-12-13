@@ -70,7 +70,11 @@ func requestHandler(inner http.Handler, name string) http.Handler {
         }
 
         if authOk {
+          if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK)
+          } else {
             inner.ServeHTTP(w, r)
+          }
         } else {
             authUser = "-"
             w.Header().Set("WWW-Authenticate", "Basic realm=wallet-control")
