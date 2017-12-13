@@ -1,13 +1,7 @@
-language: go
-
-go:
-  - 1.8
-
-before_script:
-  - go get -v ./...
+language: generic
 
 script:
-  - go install -v ./...
+  - echo nothing to do, will add tests later
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
