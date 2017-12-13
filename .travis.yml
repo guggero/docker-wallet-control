@@ -3,10 +3,7 @@ language: go
 go:
   - 1.8
 
-before_script:
-  - go get github.com/guggero/docker-wallet-control/docker
-  - go get github.com/guggero/docker-wallet-control/rpc
-  - go get github.com/guggero/docker-wallet-control/util
+go_import_path: github.com/guggero/docker-wallet-control
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
