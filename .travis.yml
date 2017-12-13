@@ -2,3 +2,12 @@ language: go
 
 go:
   - 1.8
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker build -t "guggero/docker-wallet-control:latest" docker/;
+      docker build -t "guggero/docker-wallet-control:$TRAVIS_BUILD_NUMBER" docker/;
+      docker push "guggero/docker-wallet-control:latest";
+      docker push "guggero/docker-wallet-control:$TRAVIS_BUILD_NUMBER";
+    fi
