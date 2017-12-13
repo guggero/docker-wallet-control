@@ -3,7 +3,9 @@ language: go
 go:
   - 1.8
 
-go_import_path: github.com/guggero/docker-wallet-control
+script:
+  - go get -v ./...
+  - go install -v ./...
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
