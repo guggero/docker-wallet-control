@@ -74,6 +74,7 @@ func requestHandler(inner http.Handler, name string) http.Handler {
         } else {
             authUser = "-"
             w.Header().Set("WWW-Authenticate", "Basic realm=wallet-control")
+            w.Header().Set("Access-Control-Allow-Origin", "*")
             w.WriteHeader(http.StatusUnauthorized)
             w.Write([]byte("Unauthorized\n"))
         }

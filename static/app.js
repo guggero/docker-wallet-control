@@ -2,6 +2,14 @@ angular.element(document.body).ready(function () {
   angular.bootstrap(document.body, ['app'])
 });
 
+var SERVER = localStorage.getItem('wc.server') || '';
+
+if (localStorage.getItem('wc.auth')) {
+  $.ajaxSetup({
+    headers: { 'Authorization': 'Basic ' + localStorage.getItem('wc.auth') }
+  });
+}
+
 function avoidCache() {
   return '?_=' + (new Date().getTime());
 }
@@ -60,7 +68,7 @@ angular
   });
 
 
-function AppController($http, $q, $scope) {
+function AppController($http, $q) {
   var vm = this;
 
   vm.wallets = [];
@@ -85,7 +93,7 @@ function AppController($http, $q, $scope) {
   function activate() {
     vm.running = true;
     vm.masternodes = [];
-    return $http.get('/summary' + avoidCache()).then(function (response) {
+    return $http.get(SERVER + '/summary' + avoidCache()).then(function (response) {
       vm.wallets = response.data.summaries;
       vm.uiData = response.data.uiData;
 
@@ -110,13 +118,13 @@ function AppController($http, $q, $scope) {
   }
 
   function getContainerInfo(wallet) {
-    return $http.get('/' + wallet.containername + '/health' + avoidCache()).then(function (response) {
+    return $http.get(SERVER + '/' + wallet.containername + '/health' + avoidCache()).then(function (response) {
       wallet.container = response.data;
     });
   }
 
   function getLogs(wallet) {
-    return $http.get('/' + wallet.containername + '/logs' + avoidCache()).then(function (response) {
+    return $http.get(SERVER + '/' + wallet.containername + '/logs' + avoidCache()).then(function (response) {
       wallet.logs = response.data.reverse().join('\n');
     })
   }
@@ -147,7 +155,7 @@ function AppController($http, $q, $scope) {
 
   function restart(wallet) {
     vm.running = true;
-    $http.get('/' + wallet.containername + '/restart' + avoidCache()).then(function () {
+    $http.get(SERVER + '/' + wallet.containername + '/restart' + avoidCache()).then(function () {
       return getContainerInfo(wallet);
     }).finally(function () {
       vm.running = false;
@@ -157,7 +165,7 @@ function AppController($http, $q, $scope) {
   function createAccount(wallet) {
     vm.running = true;
     var accountName = $('#create-account-' + wallet.containername).val();
-    $http.get('/' + wallet.containername + '/account/' + accountName).then(function (response) {
+    $http.get(SERVER + '/' + wallet.containername + '/account/' + accountName).then(function (response) {
       alert('Account ' + accountName + ' created, address: ' + response.data);
       activate();
     });
@@ -172,7 +180,7 @@ function AppController($http, $q, $scope) {
       address: toAddress,
       amount: amount * 1
     };
-    $http.post('/' + wallet.containername + '/sendfrom', JSON.stringify(post)).then(function (response) {
+    $http.post(SERVER + '/' + wallet.containername + '/sendfrom', JSON.stringify(post)).then(function (response) {
       alert('Sent ' + amount + ' to ' + toAddress + ' from account ' + accountName + ', result: ' + response.data);
       activate();
     });
@@ -184,7 +192,7 @@ function AppController($http, $q, $scope) {
       method: commandParts.shift(),
       args: commandParts
     };
-    $http.post('/' + wallet.containername + '/command', JSON.stringify(post)).then(function (response) {
+    $http.post(SERVER + '/' + wallet.containername + '/command', JSON.stringify(post)).then(function (response) {
       if (typeof response.data === 'string') {
         wallet.commandResponse = response.data;
       } else {
