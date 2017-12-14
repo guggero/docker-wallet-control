@@ -18,6 +18,7 @@ func NewRouter() *mux.Router {
 
   router.PathPrefix("/").Methods("OPTIONS").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Headers", "Authorization")
     w.WriteHeader(http.StatusOK);
   }));
   router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
