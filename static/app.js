@@ -94,8 +94,11 @@ function AppController($http, $q) {
       vm.wallets = response.data.summaries;
       vm.uiData = response.data.uiData;
 
-      if (vm.tab === null && vm.wallets.length > 0) {
+      if (vm.tab === null && vm.wallets && vm.wallets.length > 0) {
         vm.tab = vm.wallets[0].label;
+      } else if (!vm.wallets) {
+        vm.running = false;
+        return;
       }
 
       var promises = [];

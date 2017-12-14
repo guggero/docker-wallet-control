@@ -1,14 +1,12 @@
 FROM golang:1.8
 
-ADD . /go/
-
+RUN mkdir -p /go/src/github.com/guggero/docker-wallet-control
 WORKDIR /go/src/github.com/guggero/docker-wallet-control
+COPY . .
 
-RUN go get -v ./...
-RUN go install -v ./...
-
-WORKDIR /go/
+RUN go-wrapper download
+RUN go-wrapper install
 
 EXPOSE 80
 
-CMD ["bin/docker-wallet-control"]
+CMD ["go-wrapper", "run"]
