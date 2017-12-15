@@ -16,7 +16,7 @@ Start the wallet control container with the following command:
 docker run \
   -d \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  -v /some/dir/config/config.json:/go/config.json \
+  -v /some/dir/config/config.json:/go/src/github.com/guggero/docker-wallet-control/config.json \
   --restart always \
   --name wallet-control \
   guggero/docker-wallet-control
@@ -62,7 +62,7 @@ you need to mount a directory containing the certs to /go/tls:
 docker run \
   -d \
   ...
-  -v /some/dir/tls:/go/tls \
+  -v /some/dir/tls:/go/src/github.com/guggero/docker-wallet-control/tls \
   ...
   guggero/docker-wallet-control
 ```
