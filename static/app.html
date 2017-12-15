@@ -1,11 +1,22 @@
 <h1>Docker Wallet Admin GUI</h1>
 
-<div ng-if="vm.masternodes && vm.masternodes.length > 0">
-    <h2>Masternode overview</h2>
-
-    <table class="table">
-        <thead>
-        <tr>
+<div class="panel-group" id="masternodes">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#masternodes" href="#body">
+          Masternode overview
+          <span ng-if="vm.masternodesReady">
+          ({{vm.masternodes.length}} nodes)
+          </span>
+        </a>
+      </h4>
+    </div>
+    <div id="body" class="panel-collapse collapse">
+      <div class="panel-body">
+        <table class="table" ng-if="vm.masternodes && vm.masternodes.length > 0">
+          <thead>
+          <tr>
             <th>Type</th>
             <th>Status</th>
             <th>Service</th>
@@ -16,29 +27,32 @@
             <th>Change last 7d</th>
             <th>Change last 30d</th>
             <th>Change total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="mn in vm.masternodes | orderBy:'service'">
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="mn in vm.masternodes | orderBy:'-lastTransactionTime'">
             <td>{{mn.type}}</td>
             <td>{{mn.status}}</td>
             <td>{{mn.service}}</td>
             <td>
-                <a target="_blank" href="{{vm.uiData.apis.link | formatString:mn.type:mn.address}}">
-                    {{mn.address}}
-                </a>
+              <a target="_blank" href="{{vm.uiData.apis.link | formatString:mn.type:mn.address}}">
+              {{mn.address}}
+             </a>
             </td>
             <td>{{mn.balance | amount}}</td>
             <td>{{mn.transactions.length}}</td>
-            <td>{{mn.transactions[0].time_utc | date}} ({{mn.transactions[0].change | amount}})
-                {{mn.transactions[0].time_utc | ago}} ago
+            <td>
+              {{mn.lastTransactionTime | date}} ({{mn.lastTransaction.change | amount}}) {{mn.lastTransactionTime | ago}} ago
             </td>
             <td>{{mn.transactions | change:7 | amount}}</td>
             <td>{{mn.transactions | change:30 | amount}}</td>
             <td>{{mn.transactions | change | amount}}</td>
-        </tr>
-        </tbody>
-    </table>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <h2>Wallet operations</h2>
@@ -81,39 +95,39 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>Wallet and network statistics </strong>
-                    <button ng-click="vm.activate()">refresh</button>
+                    <button ng-click="vm.refreshSummary()">refresh</button>
                 </div>
                 <div class="panel-body">
                     <table border="0">
                         <tr>
                             <td>Balance:</td>
-                            <td>{{wallet.balance}}</td>
+                            <td>{{wallet.summary.balance}}</td>
                         </tr>
                         <tr>
                             <td>Unconfirmed balance:</td>
-                            <td>{{wallet.unconfirmedbalance}}</td>
+                            <td>{{wallet.summary.unconfirmedbalance}}</td>
                         </tr>
                         <tr>
                             <td>Blocks:</td>
-                            <td>{{wallet.blocks}}</td>
+                            <td>{{wallet.summary.blocks}}</td>
                         </tr>
                         <tr>
                             <td>Difficulty:</td>
-                            <td>{{wallet.difficulty}}</td>
+                            <td>{{wallet.summary.difficulty}}</td>
                         </tr>
                         <tr>
                             <td>Testnet:</td>
-                            <td>{{wallet.testnet}}</td>
+                            <td>{{wallet.summary.testnet}}</td>
                         </tr>
                         <tr>
                             <td>Keys in key pool:</td>
-                            <td>{{wallet.keypoolsize}}</td>
+                            <td>{{wallet.summary.keypoolsize}}</td>
                         </tr>
                         <tr>
                             <td>Accounts:</td>
                             <td>
                                 <ul>
-                                    <li ng-repeat-start="account in wallet.accounts | orderBy:'name'">Name:
+                                    <li ng-repeat-start="account in wallet.summary.accounts | orderBy:'name'">Name:
                                         {{account.name}}
                                     </li>
                                     <li>Balance: {{account.balance}}</li>

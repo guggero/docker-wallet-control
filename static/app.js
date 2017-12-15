@@ -60,15 +60,17 @@ angular
   });
 
 
-function AppController($http, $q) {
+function AppController($http, $q, lodash) {
   var vm = this,
-    SERVER = localStorage.getItem('wc.server') || '';
+    SERVER = localStorage.getItem('wc.server') || '',
+    CONFIG = {headers: {}};
 
   vm.wallets = [];
   vm.uiData = null;
   vm.tab = null;
   vm.running = true;
   vm.masternodes = [];
+  vm.masternodesReady = false;
 
   vm.activate = activate;
   vm.changeTab = changeTab;
@@ -78,6 +80,7 @@ function AppController($http, $q) {
   vm.createAccount = createAccount;
   vm.sendFrom = sendFrom;
   vm.sendCommand = sendCommand;
+  vm.refreshSummary = refreshSummary;
 
   activate();
 
@@ -85,13 +88,21 @@ function AppController($http, $q) {
 
   function activate() {
     if (localStorage.getItem('wc.auth')) {
-      $http.defaults.headers.common['Authorization'] = localStorage.getItem('wc.auth');
+      CONFIG.headers['Authorization'] = 'Basic ' + localStorage.getItem('wc.auth');
     }
 
     vm.running = true;
     vm.masternodes = [];
-    return $http.get(SERVER + '/summary' + avoidCache()).then(function (response) {
-      vm.wallets = response.data.summaries;
+    return $http.get(SERVER + '/summary' + avoidCache(), CONFIG).then(function (response) {
+      vm.wallets = response.data.summaries.map(function (summary) {
+        return {
+          containername: summary.containername,
+          wallettype: summary.wallettype,
+          label: summary.label,
+          masternodeStatus: summary.masternodeStatus,
+          summary: summary
+        }
+      });
       vm.uiData = response.data.uiData;
 
       if (vm.tab === null && vm.wallets && vm.wallets.length > 0) {
@@ -102,15 +113,36 @@ function AppController($http, $q) {
       }
 
       var promises = [];
+      var mnPromises = [];
       vm.wallets.forEach(function (wallet) {
         promises.push(getContainerInfo(wallet));
         promises.push(getLogs(wallet));
-        promises.push(getMasternodeStats(wallet));
+        mnPromises.push(getMasternodeStats(wallet));
       });
       $q.all(promises).finally(function () {
         vm.running = false;
-      })
-    })
+      });
+      $q.all(mnPromises).finally(function () {
+        vm.masternodesReady = true;
+      });
+    });
+  }
+
+  function refreshSummary() {
+    $http.get(SERVER + '/summary' + avoidCache(), CONFIG).then(function (response) {
+      var newSummaries = response.data.summaries.map(function (summary) {
+        return {
+          containername: summary.containername,
+          wallettype: summary.wallettype,
+          label: summary.label,
+          masternodeStatus: summary.masternodeStatus,
+          summary: summary
+        }
+      });
+      response.data.summaries.forEach(function (summary) {
+        lodash.find(vm.wallets, ['label', summary.label]).summary = summary;
+      });
+    });
   }
 
   function changeTab(wallet) {
@@ -118,15 +150,15 @@ function AppController($http, $q) {
   }
 
   function getContainerInfo(wallet) {
-    return $http.get(SERVER + '/' + wallet.containername + '/health' + avoidCache()).then(function (response) {
+    return $http.get(SERVER + '/' + wallet.containername + '/health' + avoidCache(), CONFIG).then(function (response) {
       wallet.container = response.data;
     });
   }
 
   function getLogs(wallet) {
-    return $http.get(SERVER + '/' + wallet.containername + '/logs' + avoidCache()).then(function (response) {
+    return $http.get(SERVER + '/' + wallet.containername + '/logs' + avoidCache(), CONFIG).then(function (response) {
       wallet.logs = response.data.reverse().join('\n');
-    })
+    });
   }
 
   function getMasternodeStats(wallet) {
@@ -138,14 +170,17 @@ function AppController($http, $q) {
       if (wallet.masternodeStatus.address) {
         var url = formatString(vm.uiData.apis.address, wallet.wallettype, wallet.masternodeStatus.address);
         return $http.get(url).then(function (response) {
-          vm.masternodes.push({
+          var mn = {
             service: wallet.masternodeStatus.service,
             status: wallet.masternodeStatus.status,
             type: wallet.wallettype,
             address: wallet.masternodeStatus.address,
             balance: response.data.addresses[0].final_balance,
             transactions: mergeTransactions(response.data.txs, 'hash', 'change')
-          });
+          };
+          mn.lastTransaction = mn.transactions[0];
+          mn.lastTransactionTime = mn.lastTransaction.time_utc;
+          vm.masternodes.push(mn);
         });
       }
     } else {
@@ -155,7 +190,7 @@ function AppController($http, $q) {
 
   function restart(wallet) {
     vm.running = true;
-    $http.get(SERVER + '/' + wallet.containername + '/restart' + avoidCache()).then(function () {
+    $http.get(SERVER + '/' + wallet.containername + '/restart' + avoidCache(), CONFIG).then(function () {
       return getContainerInfo(wallet);
     }).finally(function () {
       vm.running = false;
@@ -165,7 +200,7 @@ function AppController($http, $q) {
   function createAccount(wallet) {
     vm.running = true;
     var accountName = $('#create-account-' + wallet.containername).val();
-    $http.get(SERVER + '/' + wallet.containername + '/account/' + accountName).then(function (response) {
+    $http.get(SERVER + '/' + wallet.containername + '/account/' + accountName, CONFIG).then(function (response) {
       alert('Account ' + accountName + ' created, address: ' + response.data);
       activate();
     });
@@ -180,7 +215,7 @@ function AppController($http, $q) {
       address: toAddress,
       amount: amount * 1
     };
-    $http.post(SERVER + '/' + wallet.containername + '/sendfrom', JSON.stringify(post)).then(function (response) {
+    $http.post(SERVER + '/' + wallet.containername + '/sendfrom', JSON.stringify(post), CONFIG).then(function (response) {
       alert('Sent ' + amount + ' to ' + toAddress + ' from account ' + accountName + ', result: ' + response.data);
       activate();
     });
@@ -192,7 +227,7 @@ function AppController($http, $q) {
       method: commandParts.shift(),
       args: commandParts
     };
-    $http.post(SERVER + '/' + wallet.containername + '/command', JSON.stringify(post)).then(function (response) {
+    $http.post(SERVER + '/' + wallet.containername + '/command', JSON.stringify(post), CONFIG).then(function (response) {
       if (typeof response.data === 'string') {
         wallet.commandResponse = response.data;
       } else {
