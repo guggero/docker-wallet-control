@@ -171,7 +171,7 @@ Be aware that your passwords are now transmitted unencrypted!
 
 ## Screenshots
 
-###Collapsed masternode overview, tabs with all wallets, masternode status and wallet information for selected wallet:
+### Collapsed masternode overview, tabs with all wallets, masternode status and wallet information for selected wallet:
 
 ![masternode and wallet](doc/masternode_and_wallet.png)
 
