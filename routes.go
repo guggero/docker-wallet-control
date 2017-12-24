@@ -88,6 +88,7 @@ var routes = Routes{
 func routeShowSummary(w http.ResponseWriter, r *http.Request) {
     var response = &SummaryResponse{
         UiData: appConfig.UiData,
+        Summaries: []rpc.Summary{},
     }
     for _, wallet := range appConfig.Wallets {
         client, err := getRPCClient(wallet.ContainerName, r)

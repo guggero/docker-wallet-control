@@ -32,10 +32,8 @@ func getAuthenticatedUser(r *http.Request) (string) {
 
 func authenticateUser(username string, password string) (string) {
     for _, user := range appConfig.User {
-        if user.Username == username {
-            if util.HashPassword(password, user.Salt) == user.Password {
-                return user.Username
-            }
+        if user.Username == username && util.HashPassword(password, user.Salt) == user.Password {
+            return user.Username
         }
     }
     return ""

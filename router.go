@@ -21,6 +21,9 @@ func NewRouter() *mux.Router {
     w.Header().Set("Access-Control-Allow-Headers", "Authorization")
     w.WriteHeader(http.StatusOK);
   }));
-  router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+  router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Add("Cache-Control", "no-cache")
+    http.FileServer(http.Dir("./static/")).ServeHTTP(w, r)
+  })
   return router
 }
