@@ -4,11 +4,12 @@ import (
     "github.com/ybbus/jsonrpc"
     "github.com/guggero/docker-wallet-control/util"
     "errors"
+    "encoding/base64"
 )
 
 type Client struct {
     Url       string
-    RPCClient *jsonrpc.RPCClient
+    RPCClient jsonrpc.RPCClient
 }
 
 type GetInfo struct {
@@ -81,11 +82,15 @@ type Command struct {
 }
 
 func CreateClient(url string, user string, password string) (*Client) {
+    rpcClient := jsonrpc.NewClientWithOpts(url, &jsonrpc.RPCClientOpts{
+        CustomHeaders: map[string]string{
+            "Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(user+":"+password)),
+        },
+    })
     client := Client{
         Url:       url,
-        RPCClient: jsonrpc.NewRPCClient(url),
+        RPCClient: rpcClient,
     }
-    client.RPCClient.SetBasicAuth(user, password)
     return &client
 }
 

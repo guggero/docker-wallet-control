@@ -7,9 +7,15 @@ import (
     "github.com/guggero/docker-wallet-control/rpc"
 )
 
-var appConfig *util.Configuration
+var (
+    appConfig *util.Configuration
+
+    Commit string
+)
 
 func main() {
+
+    fmt.Printf("Docker Wallet Control @%s", Commit)
 
     var err error
     appConfig, err = util.ReadConfiguration("config.json")

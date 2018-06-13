@@ -4,3 +4,4 @@ README.md
 *.iml
 .idea
 config.json
+vendor

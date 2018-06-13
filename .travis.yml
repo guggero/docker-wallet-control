@@ -1,5 +1,13 @@
 language: go
 
+go:
+  - "1.9.4"
+  - "1.10"
+
+script:
+  - export PATH=$PATH:$GOPATH/bin
+  - make travis
+
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
