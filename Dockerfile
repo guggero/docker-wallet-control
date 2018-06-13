@@ -1,9 +1,10 @@
-FROM golang:alpine as builder
+FROM golang:1.10-stretch as builder
 
 # Install dependencies and build the binaries.
-RUN apk add --no-cache \
+RUN apt-get install -y \
     git \
     make \
+    gcc \
 &&  git clone https://github.com/guggero/docker-wallet-control /go/src/github.com/guggero/docker-wallet-control \
 &&  cd /go/src/github.com/guggero/docker-wallet-control \
 &&  make \
