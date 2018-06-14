@@ -16,12 +16,18 @@ FROM debian:stretch as final
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
 RUN apt-get update && apt-get install -y \
     bash \
-    ca-certificates
+    ca-certificates \
+&&  mkdir /wallet-control
 
 # Copy the binaries from the builder image.
-COPY --from=builder /go/bin/docker-wallet-control /bin/
+COPY --from=builder /go/bin/docker-wallet-control /wallet-control/
+
+# Copy the static resources
+COPY static /wallet-control/static
+
+WORKDIR /wallet-control
 
 EXPOSE 80 443
 
 # Specify the start command and entrypoint.
-CMD ["docker-wallet-control"]
+CMD ["/wallet-control/docker-wallet-control"]

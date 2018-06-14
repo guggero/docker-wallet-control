@@ -109,7 +109,7 @@ you need to mount a directory containing the certs to /go/tls:
 docker run \
   -d \
   ...
-  -v /some/dir/tls:/tls \
+  -v /some/dir/tls:/wallet-control/tls \
   ...
   guggero/docker-wallet-control
 ```
@@ -132,7 +132,7 @@ docker run \
   -d \
   -p 8443:8443 \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  -v /some/dir/config/config.json:/config.json \
+  -v /some/dir/config/config.json:/wallet-control/config.json \
   -v /some/dir/tls:/tls \
   --restart always \
   --network internal \
@@ -159,7 +159,7 @@ docker run \
   -d \
   -p 80:80 \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  -v /some/dir/config/config.json:/config.json \
+  -v /some/dir/config/config.json:/wallet-control/config.json \
   --restart always \
   --network internal \
   --name wallet-control \
