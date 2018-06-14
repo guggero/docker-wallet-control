@@ -11,10 +11,10 @@ RUN apt-get install -y \
 &&  make install
 
 # Start a new, final image.
-FROM alpine as final
+FROM debian:stretch as final
 
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
-RUN apk --no-cache add \
+RUN apt-get update && apt-get install -y \
     bash \
     ca-certificates
 
@@ -24,5 +24,4 @@ COPY --from=builder /go/bin/docker-wallet-control /bin/
 EXPOSE 80 443
 
 # Specify the start command and entrypoint.
-ENTRYPOINT ["docker-wallet-control"]
 CMD ["docker-wallet-control"]
