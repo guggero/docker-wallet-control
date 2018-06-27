@@ -127,7 +127,7 @@
     "libcontainer/system",
     "libcontainer/user"
   ]
-  revision = "0e561642f81e84ebd0b3afd6ec510c75a2ccb71b"
+  revision = "2c632d1a2de0192c3f18a2542ccb6f30a8719b1f"
 
 [[projects]]
   name = "github.com/pkg/errors"
