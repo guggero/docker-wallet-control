@@ -1,4 +1,4 @@
-FROM golang:1.10-stretch as builder
+FROM golang:1.12-stretch as builder
 
 # Install dependencies and build the binaries.
 RUN apt-get install -y \

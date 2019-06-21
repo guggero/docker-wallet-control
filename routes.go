@@ -54,12 +54,6 @@ var routes = Routes{
         routeMasternodeStatus,
     },
     Route{
-        "MasternodeList",
-        "GET",
-        "/{wallet}/masternode/list",
-        routeMasternodeList,
-    },
-    Route{
         "Command",
         "POST",
         "/{wallet}/command",
@@ -142,22 +136,7 @@ func routeMasternodeStatus(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    writeJsonResponse(w, http.StatusOK, client.Masternode("status"))
-}
-
-func routeMasternodeList(w http.ResponseWriter, r *http.Request) {
-    var (
-        client *rpc.Client
-        err error
-        vars = mux.Vars(r)
-    )
-
-    if client, err = getRPCClient(vars["wallet"], r); err != nil {
-        handleError(w, err)
-        return
-    }
-
-    writeJsonResponse(w, http.StatusOK, client.Masternode("list"))
+    writeJsonResponse(w, http.StatusOK, client.GetMasternodeStatus())
 }
 
 func routeCommand(w http.ResponseWriter, r *http.Request) {

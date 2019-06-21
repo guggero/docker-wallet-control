@@ -112,7 +112,7 @@ func (client *Client) GetSummary(hostname string, walletType string, label strin
         KeyPoolSize:        info.KeyPoolSize,
         Errors:             info.Errors,
         Accounts:           make([]Account, len(accountmap)),
-        MasternodeStatus:   client.Masternode("status"),
+        MasternodeStatus:   client.GetMasternodeStatus(),
     }
 
     var idx = 0
@@ -177,9 +177,9 @@ func (client *Client) SendFrom(transaction *Transaction) (string) {
     return result
 }
 
-func (client *Client) Masternode(command string) (interface{}) {
+func (client *Client) GetMasternodeStatus() (interface{}) {
     var result interface{}
-    client.doCall("masternode", &result, command)
+    client.doCall("getmasternodestatus", &result)
     return &result
 }
 
